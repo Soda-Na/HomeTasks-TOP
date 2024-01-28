@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HomeTasks
+namespace _11._01._2024
 {
     internal class Program
     {
