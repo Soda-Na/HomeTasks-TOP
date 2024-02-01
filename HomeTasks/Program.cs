@@ -1,101 +1,65 @@
-﻿// C# program for implementation of KMP pattern
-// searching algorithm
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-class GFG
+namespace HomeTasks
 {
-
-    void KMPSearch(string pat, string txt)
+    class KMP
     {
-        int M = pat.Length;
-        int N = txt.Length;
-
-        // create lps[] that will hold the longest
-        // prefix suffix values for pattern
-        int[] lps = new int[M];
-        int j = 0; // index for pat[]
-
-        // Preprocess the pattern (calculate lps[]
-        computeLPSArray(pat, M, lps);
-        Console.WriteLine("lps array: ");
-
-        for (int i = 0; i < lps.Length; i++)
+        public List<int> prefixFunc(string s)
         {
-            Console.Write(lps[i] + " ");
+            List<int> p = new List<int>(s.Length);
+            p.Add(0);
+            for (int i = 1; i < s.Length; i++)
+            {
+                int k = p[i - 1];
+                while (k > 0 && s[i] != s[k])
+                    k = p[k - 1];
+                if (s[i] == s[k])
+                    k++;
+                p.Add(k);
+            }
+            return p;
         }
 
-        int i = 0; // index for txt[]
-        while (i < N)
+        public List<int> kmpSearch(string s, string t)
         {
-            if (pat[j] == txt[i])
+            List<int> p = prefixFunc(s);
+            List<List<int>> ans = new List<List<int>>();
+            int k = 0;
+            int num_pattern = 0;
+            for (int i = 0; i < t.Length; i++)
             {
-                j++;
-                i++;
-            }
-            if (j == M)
-            {
-                Console.Write("Found pattern "
-                            + "at index " + (i - j));
-                j = lps[j - 1];
-            }
-
-            // mismatch after j matches
-            else if (i < N && pat[j] != txt[i])
-            {
-                // Do not match lps[0..lps[j-1]] characters,
-                // they will match anyway
-                if (j != 0)
-                    j = lps[j - 1];
-                else
-                    i = i + 1;
-            }
-        }
-    }
-
-    void computeLPSArray(string pat, int M, int[] lps)
-    {
-        // length of the previous longest prefix suffix
-        int len = 0;
-        int i = 1;
-        lps[0] = 0; // lps[0] is always 0
-
-        // the loop calculates lps[i] for i = 1 to M-1
-        while (i < M)
-        {
-            if (pat[i] == pat[len])
-            {
-                len++;
-                lps[i] = len;
-                i++;
-            }
-            else // (pat[i] != pat[len])
-            {
-                // This is tricky. Consider the example.
-                // AAACAAAA and i = 7. The idea is similar
-                // to search step.
-                if (len != 0)
+                while (k > 0 && k < s.Length && s[k] != t[i])
+                    k = p[k - 1];
+                    
+                if (k < s.Length && s[k] == t[i])
+                    k++;
+                if (k == s.Length)
                 {
-                    len = lps[len - 1];
-
-                    // Also, note that we do not increment
-                    // i here
-                }
-                else // if (len == 0)
-                {
-                    lps[i] = len;
-                    i++;
+                    Console.WriteLine(k);
+                    ans.
+                    k = p[k - 1];
                 }
             }
+            return ans;
         }
+
     }
 
-    // Driver program to test above function
-    public static void Main()
-    {
-        string txt = "ABABDABACDABABCABAB";
-        string pat = "ABABCABAB";
-        new GFG().KMPSearch(pat, txt);
+    internal class Program
+    { 
+        static void Main(string[] args)
+        {
+            KMP kmp = new KMP();
+            string s = "ab";
+            string t = "ababacabacabacabaabbacaba";
+            List<int> ans = kmp.kmpSearch(s, t);
+            foreach (int i in ans)
+                Console.WriteLine($"Pattern found on index {i}");
+            Console.ReadKey();
+        }
     }
 }
-
-// This code has been contributed by Amit Khandelwal.
